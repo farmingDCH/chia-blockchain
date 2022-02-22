@@ -17,7 +17,7 @@ from chia.server.ws_connection import WSChiaConnection
 from chia.types.peer_info import PeerInfo
 from chia.util.ints import uint16, uint64
 from chia.util.errors import Err
-from tests.setup_nodes import self_hostname, setup_simulators_and_wallets
+from tests.setup_nodes import setup_simulators_and_wallets
 from tests.time_out_assert import time_out_assert
 
 log = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class TestDos:
         # Use the server_2 ssl information to connect to server_1, and send a huge message
         timeout = ClientTimeout(total=10)
         session = ClientSession(timeout=timeout)
-        url = f"wss://{self_hostname}:{server_1._port}/ws"
+        url = f"wss://localhost:{server_1._port}/ws"
 
         ssl_context = ssl_context_for_client(
             server_2.chia_ca_crt_path, server_2.chia_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
@@ -109,7 +109,7 @@ class TestDos:
         # Use the server_2 ssl information to connect to server_1, and send a huge message
         timeout = ClientTimeout(total=10)
         session = ClientSession(timeout=timeout)
-        url = f"wss://{self_hostname}:{server_1._port}/ws"
+        url = f"wss://localhost:{server_1._port}/ws"
 
         ssl_context = ssl_context_for_client(
             server_2.chia_ca_crt_path, server_2.chia_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
@@ -155,7 +155,7 @@ class TestDos:
         # Use the server_2 ssl information to connect to server_1
         timeout = ClientTimeout(total=10)
         session = ClientSession(timeout=timeout)
-        url = f"wss://{self_hostname}:{server_1._port}/ws"
+        url = f"wss://localhost:{server_1._port}/ws"
 
         ssl_context = ssl_context_for_client(
             server_2.chia_ca_crt_path, server_2.chia_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
@@ -185,7 +185,7 @@ class TestDos:
         server_1 = nodes[0].full_node.server
         server_2 = nodes[1].full_node.server
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(server_1._port)), full_node_2.full_node.on_connect)
+        await server_2.start_client(PeerInfo("localhost", uint16(server_1._port)), full_node_2.full_node.on_connect)
 
         assert len(server_1.all_connections) == 1
 
@@ -238,7 +238,7 @@ class TestDos:
         server_1 = nodes[0].full_node.server
         server_2 = nodes[1].full_node.server
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(server_1._port)), full_node_2.full_node.on_connect)
+        await server_2.start_client(PeerInfo("localhost", uint16(server_1._port)), full_node_2.full_node.on_connect)
 
         assert len(server_1.all_connections) == 1
 
@@ -287,7 +287,7 @@ class TestDos:
         server_1 = nodes[0].full_node.server
         server_2 = nodes[1].full_node.server
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(server_1._port)), full_node_2.full_node.on_connect)
+        await server_2.start_client(PeerInfo("localhost", uint16(server_1._port)), full_node_2.full_node.on_connect)
 
         assert len(server_1.all_connections) == 1
 

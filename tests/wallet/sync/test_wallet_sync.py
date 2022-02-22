@@ -13,7 +13,7 @@ from chia.util.ints import uint16, uint32
 from chia.wallet.wallet_state_manager import WalletStateManager
 from tests.connection_utils import disconnect_all_and_reconnect
 from tests.pools.test_pool_rpc import wallet_is_synced
-from tests.setup_nodes import bt, self_hostname, setup_node_and_wallet, setup_simulators_and_wallets, test_constants
+from tests.setup_nodes import bt, setup_node_and_wallet, setup_simulators_and_wallets, test_constants
 from tests.time_out_assert import time_out_assert
 
 
@@ -65,7 +65,7 @@ class TestWalletSync:
             wallet_node.config["trusted_peers"] = {full_node_server.node_id.hex(): full_node_server.node_id.hex()}
         else:
             wallet_node.config["trusted_peers"] = {}
-        await wallet_server.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
+        await wallet_server.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
 
         # The second node should eventually catch up to the first one, and have the
         # same tip at height num_blocks - 1.
@@ -117,7 +117,7 @@ class TestWalletSync:
         for i in range(1020, len(new_blocks)):
             await full_node_api.full_node.respond_block(full_node_protocol.RespondBlock(new_blocks[i]))
 
-        await wallet_server.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
+        await wallet_server.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
 
         await time_out_assert(30, wallet.get_confirmed_balance, 20 * calculate_pool_reward(1000))
 
@@ -135,7 +135,7 @@ class TestWalletSync:
             wallet_node.config["trusted_peers"] = {full_node_server.node_id.hex(): full_node_server.node_id.hex()}
         else:
             wallet_node.config["trusted_peers"] = {}
-        await wallet_server.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
+        await wallet_server.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
 
         # The second node should eventually catch up to the first one, and have the
         # same tip at height num_blocks - 1.
@@ -157,7 +157,7 @@ class TestWalletSync:
         else:
             wallet_node.config["trusted_peers"] = {}
 
-        await wallet_server.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
+        await wallet_server.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
 
         # The second node should eventually catch up to the first one, and have the
         # same tip at height num_blocks - 1.
@@ -180,7 +180,7 @@ class TestWalletSync:
         else:
             wallet_node.config["trusted_peers"] = {}
 
-        await wallet_server.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
+        await wallet_server.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
 
         # The second node should eventually catch up to the first one, and have the
         # same tip at height num_blocks - 1.
@@ -228,7 +228,7 @@ class TestWalletSync:
         else:
             wallet_node.config["trusted_peers"] = {}
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
 
         # Insert 400 blocks
         for block in default_400_blocks:
@@ -280,7 +280,7 @@ class TestWalletSync:
         else:
             wallet_node.config["trusted_peers"] = {}
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
 
         # Insert 400 blocks
         for block in default_400_blocks:

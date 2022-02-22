@@ -37,8 +37,6 @@ keychain = temp_keyring.get_keychain()
 atexit.register(cleanup_keyring, temp_keyring)  # Attempt to cleanup the temp keychain
 bt = create_block_tools(constants=test_constants, keychain=keychain)
 
-self_hostname = bt.config["self_hostname"]
-
 
 def constants_for_dic(dic):
     return test_constants.replace(**dic)
@@ -100,7 +98,7 @@ async def setup_full_node(
     config["peer_connect_interval"] = 50
     config["sanitize_weight_proof_only"] = sanitize_weight_proof_only
     if introducer_port is not None:
-        config["introducer_peer"]["host"] = self_hostname
+        config["introducer_peer"]["host"] = "localhost"
         config["introducer_peer"]["port"] = introducer_port
     else:
         config["introducer_peer"] = None
@@ -166,7 +164,7 @@ async def setup_wallet_node(
         config["database_path"] = str(db_name)
         config["testing"] = True
 
-        config["introducer_peer"]["host"] = self_hostname
+        config["introducer_peer"]["host"] = "localhost"
         if introducer_port is not None:
             config["introducer_peer"]["port"] = introducer_port
             config["peer_connect_interval"] = 10
@@ -175,7 +173,7 @@ async def setup_wallet_node(
 
         if full_node_port is not None:
             config["full_node_peer"] = {}
-            config["full_node_peer"]["host"] = self_hostname
+            config["full_node_peer"]["host"] = "localhost"
             config["full_node_peer"]["port"] = full_node_port
         else:
             del config["full_node_peer"]
@@ -207,7 +205,7 @@ async def setup_harvester(
     kwargs.update(
         server_listen_ports=[port],
         advertised_port=port,
-        connect_peers=[PeerInfo(self_hostname, farmer_port)],
+        connect_peers=[PeerInfo("localhost", farmer_port)],
         parse_cli_args=False,
         connect_to_daemon=False,
         service_name_prefix="test_",
@@ -240,7 +238,7 @@ async def setup_farmer(
     config_pool["xch_target_address"] = encode_puzzle_hash(b_tools.pool_ph, "xch")
 
     if full_node_port:
-        config["full_node_peer"]["host"] = self_hostname
+        config["full_node_peer"]["host"] = "localhost"
         config["full_node_peer"]["port"] = full_node_port
     else:
         del config["full_node_peer"]
@@ -288,7 +286,7 @@ async def setup_introducer(port):
 
 
 async def setup_vdf_client(port):
-    vdf_task_1 = asyncio.create_task(spawn_process(self_hostname, port, 1, bt.config.get("prefer_ipv6")))
+    vdf_task_1 = asyncio.create_task(spawn_process("localhost", port, 1, bt.config.get("prefer_ipv6")))
 
     def stop():
         asyncio.create_task(kill_processes())
@@ -301,9 +299,9 @@ async def setup_vdf_client(port):
 
 
 async def setup_vdf_clients(port):
-    vdf_task_1 = asyncio.create_task(spawn_process(self_hostname, port, 1, bt.config.get("prefer_ipv6")))
-    vdf_task_2 = asyncio.create_task(spawn_process(self_hostname, port, 2, bt.config.get("prefer_ipv6")))
-    vdf_task_3 = asyncio.create_task(spawn_process(self_hostname, port, 3, bt.config.get("prefer_ipv6")))
+    vdf_task_1 = asyncio.create_task(spawn_process("localhost", port, 1, bt.config.get("prefer_ipv6")))
+    vdf_task_2 = asyncio.create_task(spawn_process("localhost", port, 2, bt.config.get("prefer_ipv6")))
+    vdf_task_3 = asyncio.create_task(spawn_process("localhost", port, 3, bt.config.get("prefer_ipv6")))
 
     def stop():
         asyncio.create_task(kill_processes())

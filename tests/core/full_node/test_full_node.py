@@ -55,7 +55,7 @@ from tests.core.full_node.stores.test_coin_store import get_future_reward_coins
 from tests.core.full_node.test_mempool_performance import wallet_height_at_least
 from tests.core.make_block_generator import make_spend_bundle
 from tests.core.node_height import node_height_at_least
-from tests.setup_nodes import bt, self_hostname, setup_simulators_and_wallets, test_constants
+from tests.setup_nodes import bt, setup_simulators_and_wallets, test_constants
 from tests.time_out_assert import time_out_assert, time_out_assert_custom_interval, time_out_messages
 
 log = logging.getLogger(__name__)
@@ -468,14 +468,14 @@ class TestFullNodeProtocol:
         for i in range(1, 4):
             full_node_i = nodes[i]
             server_i = full_node_i.full_node.server
-            await server_i.start_client(PeerInfo(self_hostname, uint16(server_1._port)))
+            await server_i.start_client(PeerInfo("localhost", uint16(server_1._port)))
         assert len(server_1.get_full_node_connections()) == 2
 
     @pytest.mark.asyncio
     async def test_request_peers(self, wallet_nodes):
         full_node_1, full_node_2, server_1, server_2, wallet_a, wallet_receiver = wallet_nodes
         full_node_2.full_node.full_node_peers.address_manager.make_private_subnets_valid()
-        await server_2.start_client(PeerInfo(self_hostname, uint16(server_1._port)))
+        await server_2.start_client(PeerInfo("localhost", uint16(server_1._port)))
 
         async def have_msgs():
             await full_node_2.full_node.full_node_peers.address_manager.add_to_new_table(
@@ -487,7 +487,7 @@ class TestFullNodeProtocol:
             if msg is not None and not (len(msg.peer_list) == 1):
                 return False
             peer = msg.peer_list[0]
-            return (peer.host == self_hostname or peer.host == "127.0.0.1") and peer.port == 1000
+            return (peer.host == "localhost" or peer.host == "127.0.0.1") and peer.port == 1000
 
         await time_out_assert_custom_interval(10, 1, have_msgs, True)
         full_node_1.full_node.full_node_peers.address_manager = AddressManager()

@@ -8,7 +8,7 @@ from chia.protocols import full_node_protocol
 from chia.types.peer_info import PeerInfo
 from chia.util.ints import uint16
 from tests.connection_utils import connect_and_get_peer
-from tests.setup_nodes import bt, self_hostname, setup_two_nodes, test_constants
+from tests.setup_nodes import bt, setup_two_nodes, test_constants
 from tests.time_out_assert import time_out_assert
 
 
@@ -32,7 +32,7 @@ class TestNodeLoad:
         peer = await connect_and_get_peer(server_1, server_2)
         await full_node_1.full_node.respond_block(full_node_protocol.RespondBlock(blocks[0]), peer)
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(server_1._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(server_1._port)), None)
 
         async def num_connections():
             return len(server_2.get_connections())

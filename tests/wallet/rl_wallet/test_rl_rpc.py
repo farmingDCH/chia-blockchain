@@ -13,7 +13,7 @@ from chia.util.bech32m import encode_puzzle_hash
 from chia.util.ints import uint16
 from chia.wallet.transaction_record import TransactionRecord
 from chia.wallet.util.wallet_types import WalletType
-from tests.setup_nodes import self_hostname, setup_simulators_and_wallets
+from tests.setup_nodes import setup_simulators_and_wallets
 from tests.time_out_assert import time_out_assert
 from tests.wallet.sync.test_wallet_sync import wallet_height_at_least
 
@@ -71,9 +71,9 @@ class TestRLWallet:
 
         wallet = wallet_node.wallet_state_manager.main_wallet
         ph = await wallet.get_new_puzzlehash()
-        await server_2.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
-        await wallet_server_1.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
-        await wallet_server_2.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
+        await wallet_server_1.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
+        await wallet_server_2.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
         await full_node_api.farm_new_transaction_block(FarmNewBlockProtocol(ph))
         for i in range(0, num_blocks + 1):
             await full_node_api.farm_new_transaction_block(FarmNewBlockProtocol(32 * b"\0"))
@@ -81,7 +81,7 @@ class TestRLWallet:
         fund_owners_initial_balance = await wallet.get_confirmed_balance()
         api_user = WalletRpcApi(wallet_node_1)
         val = await api_user.create_new_wallet(
-            {"wallet_type": "rl_wallet", "rl_type": "user", "host": f"{self_hostname}:5000"}
+            {"wallet_type": "rl_wallet", "rl_type": "user", "host": "localhost:5000"}
         )
         await asyncio.sleep(2)
         assert isinstance(val, dict)
@@ -102,7 +102,7 @@ class TestRLWallet:
                 "pubkey": pubkey,
                 "amount": 100,
                 "fee": 1,
-                "host": f"{self_hostname}:5000",
+                "host": "localhost:5000",
             }
         )
         assert isinstance(val, dict)

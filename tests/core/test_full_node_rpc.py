@@ -22,7 +22,7 @@ from chia.util.ints import uint16, uint8
 from tests.blockchain.blockchain_test_utils import _validate_and_add_block
 from tests.wallet_tools import WalletTool
 from tests.connection_utils import connect_and_get_peer
-from tests.setup_nodes import bt, self_hostname, setup_simulators_and_wallets, test_constants
+from tests.setup_nodes import bt, setup_simulators_and_wallets, test_constants
 from tests.time_out_assert import time_out_assert
 from tests.util.rpc import validate_get_routes
 
@@ -64,7 +64,7 @@ class TestRpc:
         )
 
         try:
-            client = await FullNodeRpcClient.create(self_hostname, test_rpc_port, bt.root_path, config)
+            client = await FullNodeRpcClient.create(hostname, test_rpc_port, bt.root_path, config)
             await validate_get_routes(client, full_node_rpc_api)
             state = await client.get_blockchain_state()
             assert state["peak"] is None
@@ -196,7 +196,7 @@ class TestRpc:
 
             assert len(await client.get_connections()) == 0
 
-            await client.open_connection(self_hostname, server_2._port)
+            await client.open_connection(hostname, server_2._port)
 
             async def num_connections():
                 return len(await client.get_connections())
@@ -261,7 +261,7 @@ class TestRpc:
         )
 
         try:
-            client = await FullNodeRpcClient.create(self_hostname, test_rpc_port, bt.root_path, config)
+            client = await FullNodeRpcClient.create(hostname, test_rpc_port, bt.root_path, config)
 
             # Only provide one
             res = await client.get_recent_signage_point_or_eos(None, None)

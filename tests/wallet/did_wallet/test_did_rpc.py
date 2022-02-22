@@ -10,7 +10,7 @@ from chia.simulator.simulator_protocol import FarmNewBlockProtocol
 from chia.types.peer_info import PeerInfo
 from chia.util.ints import uint16, uint64
 from chia.wallet.util.wallet_types import WalletType
-from tests.setup_nodes import self_hostname, setup_simulators_and_wallets, bt
+from tests.setup_nodes import setup_simulators_and_wallets, bt
 from tests.time_out_assert import time_out_assert
 from chia.wallet.did_wallet.did_wallet import DIDWallet
 
@@ -45,9 +45,9 @@ class TestDIDWallet:
 
         wallet = wallet_node_0.wallet_state_manager.main_wallet
         ph = await wallet.get_new_puzzlehash()
-        await wallet_server_0.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
-        await wallet_server_1.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
-        await wallet_server_2.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
+        await wallet_server_0.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
+        await wallet_server_1.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
+        await wallet_server_2.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
         await full_node_api.farm_new_transaction_block(FarmNewBlockProtocol(ph))
         for i in range(0, num_blocks + 1):
             await full_node_api.farm_new_transaction_block(FarmNewBlockProtocol(32 * b"\0"))
@@ -58,11 +58,11 @@ class TestDIDWallet:
         config = bt.config
         daemon_port = config["daemon_port"]
         test_rpc_port = uint16(21529)
-        await wallet_server_0.start_client(PeerInfo(self_hostname, uint16(full_node_server._port)), None)
-        client = await WalletRpcClient.create(self_hostname, test_rpc_port, bt.root_path, bt.config)
+        await wallet_server_0.start_client(PeerInfo("localhost", uint16(full_node_server._port)), None)
+        client = await WalletRpcClient.create("localhost", test_rpc_port, bt.root_path, bt.config)
         rpc_server_cleanup = await start_rpc_server(
             api_one,
-            self_hostname,
+            "localhost",
             daemon_port,
             test_rpc_port,
             lambda x: None,

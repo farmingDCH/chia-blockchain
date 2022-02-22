@@ -25,7 +25,7 @@ from chia.wallet.wallet import Wallet
 from chia.wallet.wallet_state_manager import WalletStateManager
 from tests.connection_utils import add_dummy_connection
 from tests.pools.test_pool_rpc import wallet_is_synced
-from tests.setup_nodes import self_hostname, setup_simulators_and_wallets, bt
+from tests.setup_nodes import setup_simulators_and_wallets, bt
 from tests.time_out_assert import time_out_assert
 from tests.wallet.cat_wallet.test_cat_wallet import tx_in_pool
 from tests.wallet_tools import WalletTool
@@ -75,7 +75,7 @@ class TestSimpleSyncProtocol:
         fn_server = full_node_api.full_node.server
         wsm: WalletStateManager = wallet_node.wallet_state_manager
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
         incoming_queue, peer_id = await add_dummy_connection(fn_server, 12312, NodeType.WALLET)
 
         zero_ph = 32 * b"\0"
@@ -265,7 +265,7 @@ class TestSimpleSyncProtocol:
         standard_wallet: Wallet = wsm.wallets[1]
         puzzle_hash = await standard_wallet.get_new_puzzlehash()
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
         incoming_queue, peer_id = await add_dummy_connection(fn_server, 12312, NodeType.WALLET)
 
         fake_wallet_peer = fn_server.all_connections[peer_id]
@@ -373,7 +373,7 @@ class TestSimpleSyncProtocol:
         standard_wallet: Wallet = wsm.wallets[1]
         puzzle_hash = await standard_wallet.get_new_puzzlehash()
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
         incoming_queue, peer_id = await add_dummy_connection(fn_server, 12312, NodeType.WALLET)
 
         fake_wallet_peer = fn_server.all_connections[peer_id]
@@ -448,7 +448,7 @@ class TestSimpleSyncProtocol:
         standard_wallet: Wallet = wsm.wallets[1]
         puzzle_hash = await standard_wallet.get_new_puzzlehash()
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
         incoming_queue, peer_id = await add_dummy_connection(fn_server, 12312, NodeType.WALLET)
 
         fake_wallet_peer = fn_server.all_connections[peer_id]
@@ -512,7 +512,7 @@ class TestSimpleSyncProtocol:
         fn_server = full_node_api.full_node.server
         wsm: WalletStateManager = wallet_node.wallet_state_manager
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
         incoming_queue, peer_id = await add_dummy_connection(fn_server, 12312, NodeType.WALLET)
 
         wt: WalletTool = bt.get_pool_wallet_tool()
@@ -591,7 +591,7 @@ class TestSimpleSyncProtocol:
 
         wsm: WalletStateManager = wallet_node.wallet_state_manager
 
-        await server_2.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await server_2.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
         incoming_queue, peer_id = await add_dummy_connection(fn_server, 12312, NodeType.WALLET)
         incoming_queue_1, peer_id_1 = await add_dummy_connection(fn_server_1, 12313, NodeType.WALLET)
 
@@ -641,7 +641,7 @@ class TestSimpleSyncProtocol:
         node1_height = full_node_api_1.full_node.blockchain.get_peak_height()
         assert node1_height is None
 
-        await fn_server_1.start_client(PeerInfo(self_hostname, uint16(fn_server._port)), None)
+        await fn_server_1.start_client(PeerInfo("localhost", uint16(fn_server._port)), None)
         node0_height = full_node_api.full_node.blockchain.get_peak_height()
         await time_out_assert(15, full_node_api_1.full_node.blockchain.get_peak_height, node0_height)
 

@@ -5,7 +5,7 @@ from chia.util.ints import uint16
 from chia.util.keyring_wrapper import DEFAULT_PASSPHRASE_IF_NO_MASTER_PASSPHRASE
 from chia.util.ws_message import create_payload
 from tests.core.node_height import node_height_at_least
-from tests.setup_nodes import setup_daemon, self_hostname, setup_full_system
+from tests.setup_nodes import setup_daemon, setup_full_system
 from tests.simulation.test_simulation import test_constants_modified
 from tests.time_out_assert import time_out_assert, time_out_assert_custom_interval
 from tests.util.keyring import TempKeyring
@@ -60,7 +60,7 @@ class TestDaemon:
     @pytest.mark.asyncio
     async def test_daemon_simulation(self, simulation, get_daemon, get_b_tools):
         node1, node2, _, _, _, _, _, _, _, _, server1 = simulation
-        await server1.start_client(PeerInfo(self_hostname, uint16(21238)))
+        await server1.start_client(PeerInfo("localhost", uint16(21238)))
 
         async def num_connections():
             count = len(node2.server.connection_by_type[NodeType.FULL_NODE].items())

@@ -18,7 +18,7 @@ from chia.util.config import load_config, save_config
 from chia.util.hash import std_hash
 from chia.util.ints import uint8, uint16, uint32, uint64
 from chia.wallet.derive_keys import master_sk_to_wallet_sk
-from tests.setup_nodes import bt, self_hostname, setup_farmer_harvester, test_constants
+from tests.setup_nodes import bt, setup_farmer_harvester, test_constants
 from tests.time_out_assert import time_out_assert, time_out_assert_custom_interval
 from tests.util.rpc import validate_get_routes
 
@@ -69,8 +69,8 @@ async def environment(simulation):
         connect_to_daemon=False,
     )
 
-    farmer_rpc_client = await FarmerRpcClient.create(self_hostname, rpc_port_farmer, bt.root_path, config)
-    harvester_rpc_client = await HarvesterRpcClient.create(self_hostname, rpc_port_harvester, bt.root_path, config)
+    farmer_rpc_client = await FarmerRpcClient.create(hostname, rpc_port_farmer, bt.root_path, config)
+    harvester_rpc_client = await HarvesterRpcClient.create(hostname, rpc_port_harvester, bt.root_path, config)
 
     async def have_connections():
         return len(await farmer_rpc_client.get_connections()) > 0

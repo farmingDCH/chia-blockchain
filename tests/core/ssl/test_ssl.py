@@ -14,7 +14,6 @@ from tests.block_tools import test_constants
 from chia.util.ints import uint16
 from tests.setup_nodes import (
     bt,
-    self_hostname,
     setup_farmer_harvester,
     setup_introducer,
     setup_simulators_and_wallets,
@@ -27,7 +26,7 @@ async def establish_connection(server: ChiaServer, dummy_port: int, ssl_context)
     session = aiohttp.ClientSession(timeout=timeout)
     try:
         incoming_queue: asyncio.Queue = asyncio.Queue()
-        url = f"wss://{self_hostname}:{server._port}/ws"
+        url = f"wss://localhost:{server._port}/ws"
         ws = await session.ws_connect(url, autoclose=False, autoping=True, ssl=ssl_context)
         wsc = WSChiaConnection(
             NodeType.FULL_NODE,
@@ -36,7 +35,7 @@ async def establish_connection(server: ChiaServer, dummy_port: int, ssl_context)
             server.log,
             True,
             False,
-            self_hostname,
+            "localhost",
             incoming_queue,
             lambda x, y: x,
             None,
@@ -79,7 +78,7 @@ class TestSSL:
         server_1: ChiaServer = full_node_api.full_node.server
         wallet_node, server_2 = wallets[0]
 
-        success = await server_2.start_client(PeerInfo(self_hostname, uint16(server_1._port)), None)
+        success = await server_2.start_client(PeerInfo("localhost", uint16(server_1._port)), None)
         assert success is True
 
     @pytest.mark.asyncio

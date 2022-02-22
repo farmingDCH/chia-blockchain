@@ -15,7 +15,6 @@ from chia.ssl.create_ssl import generate_ca_signed_cert
 from chia.types.blockchain_format.sized_bytes import bytes32
 from chia.types.peer_info import PeerInfo
 from chia.util.ints import uint16
-from tests.setup_nodes import self_hostname
 from tests.time_out_assert import time_out_assert
 
 log = logging.getLogger(__name__)
@@ -25,7 +24,7 @@ async def disconnect_all_and_reconnect(server: ChiaServer, reconnect_to: ChiaSer
     cons = list(server.all_connections.values())[:]
     for con in cons:
         await con.close()
-    return await server.start_client(PeerInfo(self_hostname, uint16(reconnect_to._port)), None)
+    return await server.start_client(PeerInfo("localhost", uint16(reconnect_to._port)), None)
 
 
 async def add_dummy_connection(
@@ -45,7 +44,7 @@ async def add_dummy_connection(
     pem_cert = x509.load_pem_x509_certificate(dummy_crt_path.read_bytes(), default_backend())
     der_cert = x509.load_der_x509_certificate(pem_cert.public_bytes(serialization.Encoding.DER), default_backend())
     peer_id = bytes32(der_cert.fingerprint(hashes.SHA256()))
-    url = f"wss://{self_hostname}:{server._port}/ws"
+    url = f"wss://localhost:{server._port}/ws"
     ws = await session.ws_connect(url, autoclose=True, autoping=True, ssl=ssl_context)
     wsc = WSChiaConnection(
         type,
@@ -54,7 +53,7 @@ async def add_dummy_connection(
         log,
         True,
         False,
-        self_hostname,
+        "localhost",
         incoming_queue,
         lambda x, y: x,
         peer_id,
@@ -70,7 +69,7 @@ async def connect_and_get_peer(server_1: ChiaServer, server_2: ChiaServer) -> WS
     """
     Connect server_2 to server_1, and get return the connection in server_1.
     """
-    await server_2.start_client(PeerInfo(self_hostname, uint16(server_1._port)))
+    await server_2.start_client(PeerInfo("localhost", uint16(server_1._port)))
 
     async def connected():
         for node_id_c, _ in server_1.all_connections.items():

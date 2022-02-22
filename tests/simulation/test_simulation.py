@@ -5,7 +5,7 @@ from chia.types.peer_info import PeerInfo
 from tests.block_tools import create_block_tools_async
 from chia.util.ints import uint16
 from tests.core.node_height import node_height_at_least
-from tests.setup_nodes import self_hostname, setup_full_node, setup_full_system, test_constants
+from tests.setup_nodes import setup_full_node, setup_full_system, test_constants
 from tests.time_out_assert import time_out_assert
 from tests.util.keyring import TempKeyring
 
@@ -52,10 +52,10 @@ class TestSimulation:
     @pytest.mark.asyncio
     async def test_simulation_1(self, simulation, extra_node):
         node1, node2, _, _, _, _, _, _, _, sanitizer_server, server1 = simulation
-        await server1.start_client(PeerInfo(self_hostname, uint16(21238)))
+        await server1.start_client(PeerInfo("localhost", uint16(21238)))
         # Use node2 to test node communication, since only node1 extends the chain.
         await time_out_assert(1500, node_height_at_least, True, node2, 7)
-        await sanitizer_server.start_client(PeerInfo(self_hostname, uint16(21238)))
+        await sanitizer_server.start_client(PeerInfo("localhost", uint16(21238)))
 
         async def has_compact(node1, node2):
             peak_height_1 = node1.full_node.blockchain.get_peak_height()
@@ -99,6 +99,6 @@ class TestSimulation:
         node3 = extra_node
         server3 = node3.full_node.server
         peak_height = max(node1.full_node.blockchain.get_peak_height(), node2.full_node.blockchain.get_peak_height())
-        await server3.start_client(PeerInfo(self_hostname, uint16(21237)))
-        await server3.start_client(PeerInfo(self_hostname, uint16(21238)))
+        await server3.start_client(PeerInfo("localhost", uint16(21237)))
+        await server3.start_client(PeerInfo("localhost", uint16(21238)))
         await time_out_assert(600, node_height_at_least, True, node3, peak_height)
